@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 # Cargar los datos
 train_df = pd.read_csv('train.csv')
 test_df = pd.read_csv('test.csv')
+pd.set_option('display.float_format', '{:.3f}'.format)
 
 # Garantizar reproducibilidad
 random_state = 42
@@ -15,7 +16,7 @@ def exploracion_datos(df):
     print("\nDescripción estadística:")
     print(df.describe())
     print("\nValores nulos por columna:")
-    print(df.isnull().sum())
+    print(df.isnull().sum().sort_values(ascending=False).head(10))
     
     # Histograma de precios de las casas
     plt.figure(figsize=(8,5))
@@ -26,7 +27,7 @@ def exploracion_datos(df):
     plt.show()
 
 exploracion_datos(train_df)
-
+"""
 # Análisis de agrupamiento: Vecindarios
 agrupamiento = train_df.groupby('Neighborhood')['SalePrice'].mean().sort_values()
 plt.figure(figsize=(12,5))
@@ -132,3 +133,4 @@ plt.xlabel('Precio Real en Test')
 plt.ylabel('Precio Predicho en Test')
 plt.title('Evaluación del Modelo en Datos de Prueba')
 plt.show()
+"""
