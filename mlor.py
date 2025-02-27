@@ -123,4 +123,3 @@ plt.xlabel('Precio Real en Test')
 plt.ylabel('Precio Predicho en Test')
 plt.title('Evaluación del Modelo en Datos de Prueba')
 plt.show()
-"""
