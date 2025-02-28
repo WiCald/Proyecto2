@@ -44,6 +44,20 @@ plt.title('Precio Promedio de Casas por Vecindario')
 plt.xticks(rotation=90)
 plt.show()
 
+precio_promedio = train_df.groupby('Neighborhood')['SalePrice'].mean()
+calidad_promedio = train_df.groupby('Neighborhood')['OverallQual'].mean()
+plt.scatter(precio_promedio, calidad_promedio, color='green', alpha=0.7)
+plt.xlabel('Precio Promedio')
+plt.ylabel('Calidad promedio contruccion')
+plt.title('Relacion calidad y precio por vecindario')
+plt.grid()
+plt.show()
+
+train_df['Grupo_Precio'] = pd.qcut(train_df['SalePrice'], q=3, labels=['Economico', 'Medio', 'Costo elevado'])
+train_df['Grupo_Calidad']= pd.qcut(train_df['OverallQual'], q=3, labels=['Baja', 'Media', 'Alta'])
+comparaciones = train_df.groupby('Grupo_Precio')[['YearBuilt', 'LotArea', 'TotRmsAbvGrd', 'GarageCars']].mean()
+print(comparaciones)
+
 # ===============================
 # 4. División del dataset (Entrenamiento y Prueba)
 # ===============================
