@@ -11,7 +11,6 @@ pd.set_option('display.float_format', '{:.3f}'.format)
 
 # Garantizar reproducibilidad
 random_state = 42
-
 # ===============================
 # 2. Análisis exploratorio extenso
 # ===============================
@@ -73,6 +72,7 @@ print(f"Datos de prueba: {len(test_data)} filas")
 # ===============================
 # 5. Ingeniería de características
 # ===============================
+
 print("5. Ingeniería de características")
 vars_seleccionadas = ['OverallQual', 'GrLivArea', 'TotalBsmtSF']
 X_multi = (train_data[vars_seleccionadas] - train_data[vars_seleccionadas].median()) / train_data[vars_seleccionadas].std()
@@ -137,3 +137,26 @@ plt.xlabel('Precio Real en Test')
 plt.ylabel('Precio Predicho en Test')
 plt.title('Evaluación del Modelo en Datos de Prueba')
 plt.show()
+
+# ===============================
+# 10. Detección de multicolinealidad
+# ===============================
+correlation_matrix = train_data[vars_seleccionadas].corr()
+print("\nMatriz de correlación entre las variables predictoras:")
+print(correlation_matrix)
+
+plt.figure(figsize=(6,5))
+plt.imshow(correlation_matrix, cmap='coolwarm', aspect='auto')
+plt.colorbar()
+plt.xticks(range(len(vars_seleccionadas)), vars_seleccionadas, rotation=90)
+plt.yticks(range(len(vars_seleccionadas)), vars_seleccionadas)
+plt.title('Matriz de Correlación entre Variables Predictoras')
+plt.show()
+
+# Verificación de valores altos en la matriz de correlación
+high_corr = correlation_matrix[(correlation_matrix > 0.75) & (correlation_matrix < 1.0)].dropna(how='all').dropna(axis=1, how='all')
+if high_corr.empty:
+    print("No se detectó multicolinealidad significativa entre las variables seleccionadas.")
+else:
+    print("Variables con posible multicolinealidad:")
+    print(high_corr)
