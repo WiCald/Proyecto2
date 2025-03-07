@@ -67,3 +67,24 @@ class DecisionTreeRegressorManual:
     
     def predict(self, X):
         return np.array([self.predict_single(x, self.tree) for x in X])
+
+# ===============================
+# 3. Uso del Árbol de Decisión para Predecir y Analizar
+# ===============================
+regressor = DecisionTreeRegressorManual(max_depth=5)
+regressor.tree = regressor.fit(X_train, y_train)
+y_pred = regressor.predict(X_test)
+mae = np.mean(np.abs(y_test - y_pred))
+print(f"\nEvaluación del Árbol de Decisión para Regresión:")
+print(f"MAE: {mae:.2f}")
+
+# ===============================
+# 4. Crear 3 Modelos Adicionales y Comparar
+# ===============================
+depths = [3, 7, 10]
+for depth in depths:
+    model = DecisionTreeRegressorManual(max_depth=depth)
+    model.tree = model.fit(X_train, y_train)
+    y_pred_model = model.predict(X_test)
+    mae_model = np.mean(np.abs(y_test - y_pred_model))
+    print(f"\nModelo con Profundidad {depth} - MAE: {mae_model:.2f}")
