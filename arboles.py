@@ -117,3 +117,19 @@ def categorizar_precio(precio, limites):
 limites_precio = [np.percentile(y, 33), np.percentile(y, 66)]
 train_df['CategoriaPrecio'] = np.array([categorizar_precio(p, limites_precio) for p in train_df['SalePrice']])
 y_class = train_df['CategoriaPrecio'].values
+
+# ===============================
+# 7. Construcción del Árbol de Clasificación y Visualización
+# ===============================
+class DecisionTreeClassifierManual(DecisionTreeRegressorManual):
+    def predict(self, X):
+        return np.array([round(self.predict_single(x, self.tree)) for x in X])
+
+clf = DecisionTreeClassifierManual(max_depth=5)
+clf.tree = clf.fit(X_train, y_class)
+y_pred_clf = clf.predict(X_test)
+accuracy = np.mean(y_pred_clf == y_class[:len(y_pred_clf)])
+print(f"\nPrecisión del Árbol de Clasificación: {accuracy:.2f}")
+
+plt.figure(figsize=(8, 5))
+plt.hist(y_pred_clf, bins=3, alpha=0.7, label="Predicciones")
