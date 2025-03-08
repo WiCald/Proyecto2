@@ -88,3 +88,32 @@ for depth in depths:
     y_pred_model = model.predict(X_test)
     mae_model = np.mean(np.abs(y_test - y_pred_model))
     print(f"\nModelo con Profundidad {depth} - MAE: {mae_model:.2f}")
+
+# ===============================
+# 5. Comparación con Regresión Lineal
+# ===============================
+def regresion_lineal_manual(X, y):
+    X = np.c_[np.ones(X.shape[0]), X]
+    beta = np.linalg.inv(X.T @ X) @ X.T @ y
+    return beta
+
+beta = regresion_lineal_manual(X_train, y_train)
+y_pred_lin = np.c_[np.ones(X_test.shape[0]), X_test] @ beta
+mae_lin = np.mean(np.abs(y_test - y_pred_lin))
+print(f"\nMAE del Árbol de Decisión: {mae:.2f}")
+print(f"MAE de la Regresión Lineal: {mae_lin:.2f}")
+
+# ===============================
+# 6. Creación de Variable de Clasificación
+# ===============================
+def categorizar_precio(precio, limites):
+    if precio < limites[0]:
+        return 0  # Económicas
+    elif precio < limites[1]:
+        return 1  # Intermedias
+    else:
+        return 2  # Caras
+
+limites_precio = [np.percentile(y, 33), np.percentile(y, 66)]
+train_df['CategoriaPrecio'] = np.array([categorizar_precio(p, limites_precio) for p in train_df['SalePrice']])
+y_class = train_df['CategoriaPrecio'].values
