@@ -135,6 +135,31 @@ print(f"\nPrecisión del Árbol de Clasificación: {accuracy:.2f}")
 plt.figure(figsize=(8, 5))
 plt.hist(y_pred_clf, bins=3, alpha=0.7, label="Predicciones")
 
+# ===============================
+# 8. Evaluación del Modelo de Clasificación con el Conjunto de Prueba
+# ===============================
+y_pred_clf_test = clf.predict(X_test)
+test_accuracy = np.mean(y_pred_clf_test == y_class[:len(y_pred_clf_test)])
+print(f"\nPrecisión en conjunto de prueba: {test_accuracy:.2f}")
+
+# Visualización de predicciones vs valores reales
+plt.figure(figsize=(8, 5))
+plt.hist(y_pred_clf_test, bins=3, alpha=0.7, label="Predicciones")
+plt.hist(y_class[:len(y_pred_clf_test)], bins=3, alpha=0.7, label="Reales")
+plt.xlabel("Categoría de Precio")
+plt.ylabel("Frecuencia")
+plt.title("Distribución de Predicciones vs. Valores Reales")
+plt.legend()
+plt.show()
+
+# ===============================
+# 9. Análisis de Matriz de Confusión
+# ===============================
+conf_matrix_test = np.zeros((3, 3), dtype=int)
+for true, pred in zip(y_class[:len(y_pred_clf_test)], y_pred_clf_test):
+    conf_matrix_test[true][pred] += 1
+print("Matriz de Confusión (Conjunto de Prueba):")
+print(conf_matrix_test)
 
 # ===============================
 # 10. Validación Cruzada Manual Mejorada
