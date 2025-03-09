@@ -71,7 +71,8 @@ class DecisionTreeRegressorManual:
 # ===============================
 # 3. Uso del Árbol de Decisión para Predecir y Analizar
 # ===============================
-regressor = DecisionTreeRegressorManual(max_depth=5)
+
+regressor = DecisionTreeRegressorManual(max_depth=3)
 regressor.tree = regressor.fit(X_train, y_train)
 y_pred = regressor.predict(X_test)
 mae = np.mean(np.abs(y_test - y_pred))
@@ -81,7 +82,7 @@ print(f"MAE: {mae:.2f}")
 # ===============================
 # 4. Crear 3 Modelos Adicionales y Comparar
 # ===============================
-depths = [3, 7, 10]
+depths = [5, 7, 10]
 for depth in depths:
     model = DecisionTreeRegressorManual(max_depth=depth)
     model.tree = model.fit(X_train, y_train)
@@ -133,3 +134,51 @@ print(f"\nPrecisión del Árbol de Clasificación: {accuracy:.2f}")
 
 plt.figure(figsize=(8, 5))
 plt.hist(y_pred_clf, bins=3, alpha=0.7, label="Predicciones")
+
+
+# ===============================
+# 10. Validación Cruzada Manual Mejorada
+# ===============================
+def cross_validation(X, y, k=5):
+    fold_size = len(X) // k
+    scores = []
+    for i in range(k):
+        X_val = X[i * fold_size:(i + 1) * fold_size]
+        y_val = y[i * fold_size:(i + 1) * fold_size]
+        X_train = np.concatenate([X[:i * fold_size], X[(i + 1) * fold_size:]])
+        y_train = np.concatenate([y[:i * fold_size], y[(i + 1) * fold_size:]])
+        model = DecisionTreeClassifierManual(max_depth=7)
+        model.tree = model.fit(X_train, y_train)
+        y_pred = model.predict(X_val)
+        acc = np.mean(y_pred == y_val)
+        scores.append(acc)
+    return np.mean(scores)
+
+cv_score = cross_validation(X_train, y_class)
+print(f"\nPrecisión media en Validación Cruzada: {cv_score:.2f}")
+
+# ===============================
+# 11. Entrenar 3 Modelos Más y Comparar con Profundidades Ajustadas
+# ===============================
+depths_class = [4, 8, 12]
+for depth in depths_class:
+    model = DecisionTreeClassifierManual(max_depth=depth)
+    model.tree = model.fit(X_train, y_class)
+    y_pred_model = model.predict(X_test)
+    acc_model = np.mean(y_pred_model == y_class[:len(y_pred_model)])
+    print(f"\nModelo con Profundidad {depth} - Precisión: {acc_model:.2f}")
+
+# ===============================
+# 12. Implementación y Comparación con Random Forest Mejorado
+# ===============================
+def random_forest_predict_class(X, trees):
+    predictions = np.array([tree.predict(X) for tree in trees])
+    return np.round(np.mean(predictions, axis=0)).astype(int)
+
+forest_class = [DecisionTreeClassifierManual(max_depth=7) for _ in range(15)]
+for tree in forest_class:
+    tree.tree = tree.fit(X_train, y_class)
+
+y_pred_forest_class = random_forest_predict_class(X_test, forest_class)
+acc_forest_class = np.mean(y_pred_forest_class == y_class[:len(y_pred_forest_class)])
+print(f"\nPrecisión del Random Forest Mejorado: {acc_forest_class:.2f}")
